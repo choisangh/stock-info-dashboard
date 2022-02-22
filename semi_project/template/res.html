@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>주식 분석! </title>
+
+    <!-- Bootstrap -->
+    <link href="/static/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/static/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/static/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="/static/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+	
+    <!-- bootstrap-progressbar -->
+    <link href="/static/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- JQVMap -->
+    <link href="/static/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <!-- bootstrap-daterangepicker -->
+    <link href="/static/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="/static/css/custom.css" rel="stylesheet">
+
+    <!--    google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+<style>
+  .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #26B99A; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  .lightgreen{color:#26B99A;}
+
+  .loading span {
+  display: inline-block;
+  margin: 0 -.075em;
+  animation: loading .7s infinite alternate;
+}
+.loading span:nth-child(2) {
+  animation-delay: .1s;
+}
+.loading span:nth-child(3) {
+  animation-delay: .2s;
+}
+.loading span:nth-child(4) {
+  animation-delay: .3s;
+}
+.loading span:nth-child(5) {
+  animation-delay: .4s;
+}
+.loading span:nth-child(6) {
+  animation-delay: .5s;
+}
+.loading span:nth-child(7) {
+  animation-delay: .6s;
+}
+@keyframes loading {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+</style>
+    <style>
+      body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+    </style>
+  </head>
+
+  <body class="nav-md" id="jamybody">
+    <div class="container body">
+      <div class="main_container" style="margin-left:0px">
+
+
+        <!-- top navigation -->
+        <div class="top_nav" style="margin-left:0px">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle" style="margin-bottom:0px; padding-top:18px;width: 50px;">
+                <a href="/" id="menu_toggle"><i class="fa fa-home"><h4><b></b></h4></i></a>
+              </div>
+              </nav>
+
+            <form name="myform" id="myform">
+
+          <input type="hidden" id="hidden_corp_name" name="hidden_corp_name" value=""></input>
+          <input type="hidden" id="hidden_stock_code" name="hidden_stock_code" value="">
+
+              <div class="input-group" style="width:93%;margin-bottom: 10px;margin-top: 15px;">
+              <input id="search_input" name="search_input" autocomplete="off" type="text" class="form-control" placeholder="검색어 입력 후 Enter" style="width:100%;height:30px;z-index:4;">
+                <div id="resdiv" style="position: Absolute;z-index:3;background-color:#E6E9ED;width:100%;margin-top:30px;"></div>
+              </div>
+
+      </form>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+
+        <div id=searchman class="right_col" role="main" style="margin-left:0px">
+          <!-- top tiles -->
+<!--            kms re 아이콘 변경 start-->
+          <div class="row tile_count" style="z-index:1;margin-top:60px;">
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-thumbs-o-up"></i><font size="3"> {{hidden_corp_name|safe}}</font></span>
+              <div class="count"><span style="font-size: 30px;">&#8361;&nbsp;</span>{{res_obj['ent_dict']['today']}}</div>
+
+              <span class="count_bottom"><i class="{{res_obj['ent_dict']['color']}}"><i class="{{res_obj['ent_dict']['rate']}}"></i>{{ "%.2f"|format((res_obj['ent_dict']['today'] - res_obj['ent_dict']['eve'])/res_obj['ent_dict']['eve']*100)}}&#37;
+              </i>{{res_obj['ent_dict']['eve']}}</span>
+            </div>
+<!--              kms re end-->
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-line-chart"></i><font size="3"> KOSPI</font></span>
+              <div class="count">{{f_info['^KS11'][1]}}</div>
+              <span class="count_bottom"><i class="{{f_info['^KS11']['color']}}"><i class="{{f_info['^KS11']['rate']}}"></i>{{ "%.2f"|format((f_info['^KS11'][1] - f_info['^KS11'][0])/f_info['^KS11'][0]*100)}}&#37;
+              </i> &nbsp;{{f_info['^KS11'][0]}}</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-line-chart"></i><font size="3"> KOSDAQ</font></span>
+              <div class="count">{{f_info['^KQ11'][1]}}</div>
+              <span class="count_bottom"><i class="{{f_info['^KQ11']['color']}}"><i class="{{f_info['^KQ11']['rate']}}"></i>{{ "%.2f"|format((f_info['^KQ11'][1] - f_info['^KQ11'][0])/f_info['^KQ11'][0]*100)}}&#37;
+              </i> &nbsp;{{f_info['^KQ11'][0]}}</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-line-chart"></i><font size="3"> NASDAQ</font></span>
+              <div class="count">{{f_info['^IXIC'][1]}}</div>
+              <span class="count_bottom"><i class="{{f_info['^IXIC']['color']}}"><i class="{{f_info['^IXIC']['rate']}}"></i>{{ "%.2f"|format((f_info['^IXIC'][1] - f_info['^IXIC'][0])/f_info['^IXIC'][0]*100)}}&#37;
+              </i> &nbsp;{{f_info['^IXIC'][0]}}</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-line-chart"></i><font size="3"> S&P500</font></span>
+              <div class="count">{{f_info['^GSPC'][1]}}</div>
+              <span class="count_bottom"><i class="{{f_info['^GSPC']['color']}}"><i class="{{f_info['^GSPC']['rate']}}"></i>{{ "%.2f"|format((f_info['^GSPC'][1] - f_info['^GSPC'][0])/f_info['^GSPC'][0]*100)}}&#37;
+              </i> &nbsp;{{f_info['^GSPC'][0]}}</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-line-chart"></i><font size="3"> Dows Jones</font></span>
+              <div class="count">{{f_info['^DJI'][1]}}</div>
+              <span class="count_bottom"><i class="{{f_info['^DJI']['color']}}"><i class="{{f_info['^DJI']['rate']}}"></i>{{ "%.2f"|format((f_info['^DJI'][1] - f_info['^DJI'][0])/f_info['^DJI'][0]*100)}}&#37;
+              </i> &nbsp;{{f_info['^DJI'][0]}}</span>
+            </div>
+          </div>
+            <!--kms re 아이콘 변경부분 end-->
+          <!-- /top tiles -->
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="dashboard_graph">
+
+                <div class="row x_title">
+                  <div id = 'ent_code' name = 'ent_code' class="col-md-6">
+                      <b><font size="5">{{hidden_corp_name | safe}} 주가 차트</font></b>
+                  </div>
+                  <div class="col-md-6">
+                    <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                      <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                      <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-9 col-sm-9 col-xs-12">
+<!--차트부분!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+                <div name="kms_chart_div" id = "kms_chart_div" style="margin-top:1%;">
+                  <canvas name='kms_chart' id="kms_chart" width="350" height="100"></canvas>
+                </div>
+                    </div>
+                  <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
+                  <div class="x_title">
+                    <div> <p style="text-align:center;" ><font size="6"><b>다음 장날 주가 예측</b></font></p></div>
+                    <div class="clearfix"></div>
+                  </div>
+
+                  <div class="col-md-12 col-sm-12 col-xs-6">
+                      <table border=0 bordercolor=#FFFFFF height="150" width="100%" >
+
+                            <tbody>
+                              <tr>
+                                  <td align="left"><font size="4">{{hidden_corp_name|safe}}</font></td>
+                                <td align="left" class="fs15 fw700 text-right"><font size="3">고가</font></td>
+                                  <td align="left" class="fs15 fw700 text-right"><i class="fa fa-won"></i><font size="3">{{MY_HIGH|safe}}</font></td>
+                              </tr>
+                              <tr>
+                                  <td align="left"><font size="4">{{hidden_corp_name|safe}}</font></td>
+                                  <td align="left" class="fs15 fw700 text-right"></i><font size="3">저가</font></td>
+                                  <td align="left" class="fs15 fw700 text-right"><i class="fa fa-won"><font size="3">{{MY_LOW|safe}}</font></td>
+                              </tr>
+                              <tr>
+                                <td align="left"><font size="4">{{hidden_corp_name|safe}}</font></td>
+                                <td align="left" class="fs15 fw700 text-right"><font size="3">종가</font></td>
+                                  <td align="left" class="fs15 fw700 text-right"><i class="fa fa-won"></i><font size="3">{{MY_CLOSE|safe}}</font></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                            <h2 class="line_30"> <p style="text-align:right;margin-top:30%;" ><font size="5"><b>평균오차(mae):{{MY_MAE|safe}}</b></font></p></h2>
+
+
+                  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-6">
+
+                  </div>
+
+                </div>
+<!--end!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+
+                <div class="clearfix"></div>
+              </div>
+            </div>
+
+          </div>
+          <br />
+
+          <div class="row">
+
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="x_panel tile fixed_height_390 overflow_hidden">
+               <div class="x_title">
+                  <h2><b>유사 업종 비교</b>  </h2> <!--TODO 이름 혜린-->
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+<!--             RADAR CHART 넣는 곳     -->
+                  <table class="" style="width:40%;height:60%">
+                    <tr>
+                      <canvas id="MyRadar" class="CanvasRadar"height="45%" width="80%" style="margin-top: 3%;"></canvas>
+                    </tr>
+                  </table>
+<!--             RADAR CHART 넣는 곳     -->
+
+
+<!--                  <table class="" style="width:40%">-->
+<!--                    <tr>-->
+<!--                      <th style="width:37%;">-->
+<!--                        <p>산업별 주식 비교</p>-->
+<!--                      </th>-->
+<!--                      <th>-->
+<!--                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">-->
+<!--                          <p class="">Device</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">-->
+<!--                          <p class="">Progress</p>-->
+<!--                        </div>-->
+<!--                      </th>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td>            &lt;!&ndash;canvas class, id 변경하기!!!!&ndash;&gt;-->
+<!--                        <canvas class="canvasDoughnut" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>-->
+<!--                      </td>-->
+<!--                      <td>-->
+<!--                        <table class="tile_info">-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square blue"></i>IOS </p>-->
+<!--                            </td>-->
+<!--                            <td>30%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square green"></i>Android </p>-->
+<!--                            </td>-->
+<!--                            <td>200%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square purple"></i>Blackberry </p>-->
+<!--                            </td>-->
+<!--                            <td>20%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square aero"></i>Symbian </p>-->
+<!--                            </td>-->
+<!--                            <td>15%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square red"></i>Others </p>-->
+<!--                            </td>-->
+<!--                            <td>30%</td>-->
+<!--                          </tr>-->
+<!--                        </table>-->
+<!--                      </td>-->
+<!--                    </tr>-->
+<!--                  </table>-->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="x_panel tile fixed_height_390 overflow_hidden">
+                <div class="x_title">
+                  <h2><b> 매출, 당기순이익 추이 </b></h2> <!--TODO 이름 혜린-->
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="margin-top:3%;">
+<!--             BAR CHART 넣는 곳     -->
+                  <table class="" style="width:80%">
+                    <tr>
+                      <canvas id="MyBar" class="CanvasBar"height="40%" width="80%" style="margin: 10px 5px 5px 0"></canvas>
+                    </tr>
+                  </table>
+<!--                  <table class="" style="width:40%">-->
+<!--                    <tr>-->
+<!--                      <th style="width:37%;">-->
+<!--                        <p>산업별 주식 비교</p>-->
+<!--                      </th>-->
+<!--                      <th>-->
+<!--                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">-->
+<!--                          <p class="">Device</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">-->
+<!--                          <p class="">Progress</p>-->
+<!--                        </div>-->
+<!--                      </th>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td>            &lt;!&ndash;canvas class, id 변경하기!!!!&ndash;&gt;-->
+<!--                        <canvas class="canvasDoughnut" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>-->
+<!--                      </td>-->
+<!--                      <td>-->
+<!--                        <table class="tile_info">-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square blue"></i>IOS </p>-->
+<!--                            </td>-->
+<!--                            <td>30%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square green"></i>Android </p>-->
+<!--                            </td>-->
+<!--                            <td>200%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square purple"></i>Blackberry </p>-->
+<!--                            </td>-->
+<!--                            <td>20%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square aero"></i>Symbian </p>-->
+<!--                            </td>-->
+<!--                            <td>15%</td>-->
+<!--                          </tr>-->
+<!--                          <tr>-->
+<!--                            <td>-->
+<!--                              <p><i class="fa fa-square red"></i>Others </p>-->
+<!--                            </td>-->
+<!--                            <td>30%</td>-->
+<!--                          </tr>-->
+<!--                        </table>-->
+<!--                      </td>-->
+<!--                    </tr>-->
+<!--                  </table>-->
+                </div>
+              </div>
+            </div>
+
+
+<!--            // 투자의견-->
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="x_panel tile fixed_height_390">
+                <div class="x_title">
+                  <h2><b>투자의견</b></h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <div class="dashboard-widget-content" style="margin-top:3%;">
+                    <ul class="quick-list" style="width:30%;margin-top:5%;">
+<!--                      버튼 건든부분-->
+                      <li><i class="fa fa-square" style="color: red"></i><a>강력매수</a>
+                      </li>
+                      <li><i class="fa fa-square" style="color: #fe8917"></i><a>매수</a>
+                      </li>
+                      <li><i class="fa fa-square" style="color: #66b828"></i><a>중립</a> </li>
+                      <li><i class="fa fa-square" style="color: #5793eb"></i><a>매도</a>
+                      </li>
+                      <li><i class="fa fa-square" style="color: #305ea2"></i><a>강력매도</a> </li>
+                      <li><i class="fa fa-square" style="color: #F0F3F3"></i><a>의견없음</a> </li>
+
+                    </ul>
+
+                    <div class="sidebar-widget" style="width:70%;">
+                        <canvas id="chart_gauge_01" class="" style="width: 100%; height: 100%;"></canvas>
+                        <div class="goal-wrapper">
+                          <span id="gauge-text" class="gauge-value pull-left">79</span>
+                          <span class="gauge-value pull-left">%</span>
+                          <span id="goal-text" class="goal-value pull-right">100%</span>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+<!--//뉴스-->
+          <div class="row">
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2><b>재무제표</b> <small>Net Quarter  (단위: 억원)</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content" id="ifrs_room">
+
+
+
+                      {{ ifrs|safe }}
+
+
+
+
+                  </div>
+                </div>
+              </div>
+
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2><b>관련기사</b> </h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <div class="dashboard-widget-content">
+                    <ul class="list-unstyled timeline widget">
+                      <li>
+                        {%  for v in MY_NEWS %}
+                        <div class="block">
+                          <div class="block_content">
+                            <h2 class="title">
+                                              <a href="{{v[5]}}" target=”_blank”>{{v[2]}}</a> <br> <small> {{v[0]}} </small>
+                                          </h2>
+                            <div class="byline">
+                              <span>{{v[1]}}</span>
+                            </div>
+                            <p class="excerpt">{{v[4]}}
+                            </p>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </li>
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+<!--            재무제표-->
+
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                        <h2><b>기업 투자 예보 -{{hidden_corp_name | safe}}-</b></h2>
+                      <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Settings 1</a>
+                            </li>
+                            <li><a href="#">Settings 2</a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content" style="margin-left:7%;margin-bottom:30px;margin-top:3%;">
+
+                      <div class="row">
+
+
+                            <div class="col-sm-5">
+                          <div class="daily-weather">
+                            <h2 class="day">외국인 매매 주식</h2>
+                            <h5 align="center">{{FOREIGN | safe}}주</h5>  <!--외인 해 뜨면 샀다 비오면 팔았다 폰트 줄이기 TODO-->
+                            <center><canvas height="84" width="50" id="icon5"></canvas></center>
+
+                          </div>
+                        </div>
+                        <div class="col-sm-5">
+                          <div class="daily-weather">
+                            <h2 class="day">기관 매매 주식</h2>
+                            <h5 align="center">{{GIGUAN | safe}}주</h5> <!--기관 해 뜨면 샀다 비오면 팔았다 폰트 줄이기 TODO-->
+                            <center><canvas height="84" width="50" id="icon6"></canvas></center>
+
+                          </div>
+                        </div>
+
+                      </div>
+                        <div class="row weather-days">
+                          <div class="col-sm-2">
+
+                           <div class="daily-weather">
+                              <h2 class="day">PER</h2>
+                             <h4 align="center"><b>{{WEATHER_DATA_LIST[0] | safe}}</b></h4>
+                              <center><canvas height="84" width="50" id="icon0"></canvas></center>
+                           </div>
+
+                         </div>
+                        <div class="col-sm-2">
+                          <div class="daily-weather">
+                            <h2 class="day">PBR</h2>
+                            <h4 align="center">{{WEATHER_DATA_LIST[1] | safe}}</h4>
+
+                            <center><canvas height="84" width="50" id="icon1"></canvas></center>
+
+
+
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                          <div class="daily-weather">
+                            <h2 class="day">ROE</h2>
+
+                            <h4 align="center">{{WEATHER_DATA_LIST[2] | safe}}</h4>
+                             <center><canvas height="84" width="50" id="icon2"></canvas></center>
+
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                          <div class="daily-weather">
+                            <h2 class="day">EPS</h2>
+                            <h4 align="center">{{WEATHER_DATA_LIST[3] | safe}}</h4>
+                              <center><canvas height="84" width="50" id="icon3"></canvas></center>
+
+
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                          <div class="daily-weather">
+                            <h2 class="day">BPS</h2>
+                            <h4 align="center">{{WEATHER_DATA_LIST[4] | safe}}</h4>
+                              <center><canvas height="84" width="50" id="icon4"></canvas></center>
+
+                          </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                      </div>
+                      </div>
+
+
+
+                    </div>
+                  </div>
+
+      </div>
+    </div>
+          <!-- footer content -->
+        <footer style="margin-left:0px">
+          <div class="pull-right" >
+            개발자 : 김문식 이혜린 최상현 황지현
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+
+    <!-- jQuery -->
+    <script src="/static/vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/static/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="/static/vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="/static/vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="/static/vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="/static/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="/static/vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="/static/vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="/static/vendors/Flot/jquery.flot.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.time.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="/static/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="/static/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="/static/vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="/static/vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="/static/vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="/static/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="/static/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="/static/vendors/moment/min/moment.min.js"></script>
+    <script src="/static/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="/static/js/custom.js"></script>
+
+    <style>
+      .dataframe {
+        width: 100%;
+        height:100%;
+      }
+      </style>
+    <style>
+      .dataframe {
+        width: 100%;
+        height:100%;
+      }
+      </style>
+    <script>
+         function comma(str) {
+     str = String(str);
+     return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+ }
+    </script>
+    <script>
+    $( document ).ready(function() {
+    var ent       = "{{res_obj['ent'] | safe}}"
+    var ent_dict  = {{res_obj['ent_dict'] | safe}}
+
+
+    var d_len = Object.keys(ent_dict['Date']).length
+
+    const ent_date = [];
+    const ent_close = [];
+    for (let i = 0; i < d_len; ++i) {
+      var date = new Date(ent_dict['Date'][i])
+      var sYear = date.getFullYear();
+      var sMonth = date.getMonth() + 1;
+      var sDate = date.getDate();
+
+      sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+      sDate  = sDate > 9 ? sDate : "0" + sDate;
+      date = sYear +'-'+ sMonth +'-'+ sDate;
+
+      ent_date.push(date);
+      ent_close.push(ent_dict['Close'][i]);
+    }
+    console.log(ent_date)
+    const MYDATA = {
+      labels: ent_date,                    //------------------------- X축 데이터
+      datasets: [
+      {
+        data: ent_close,      //------------------------- y축 데이터1 예:국어성적
+        borderColor: '#1ABB9C',
+        fill: true,
+        tension: 0.4
+    }]};
+    const ctx = document.getElementById('kms_chart').getContext('2d');  //--------------------차트뿌려질영역
+
+    const myChart = new Chart(ctx, {
+    type: 'line',
+    data: MYDATA,                                             //--------------------데이터 지정
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: ent + "종가 Chart"
+                    },
+                },
+        interaction: {
+            intersect: false,
+                      },
+    scales: {
+            xAxes: [{
+                gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                             }
+                                        }],
+            yAxes: [{
+                gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                             }}],
+
+        x: {                    //--------------------x축 눈금 관련
+            gridLines: {
+             display: false
+                  },
+            display: true,
+            title: {
+                    display: true,
+            //text: '이건x축제목-월'
+                   }
+            },
+        y: {                   //--------------------y축 눈금 관련
+            display: true,
+            title: {
+                 display: true,
+                  text: '가격'
+                    },
+            suggestedMin: -10,   //-------------눈금 최소
+            suggestedMax: 200    //-------------눈금 최대
+            }
+             }
+    }
+    });
+});
+
+    </script>
+  <script>
+      // Radar chart 혜린
+      // for문 돌려서 개수 선택할 수 있으면 좋을듯
+        var ctx = document.getElementById("MyRadar");
+        var data = {
+          labels: {{RD_LABEL_LIST | safe}},
+          datasets: [{
+            label: Object.keys({{RD_DATA_DICT[0] | safe}}), //TODO 이름
+            backgroundColor: "rgba(3, 88, 106, 0.2)",
+            borderColor: "rgba(3, 88, 106, 0.80)",
+            pointBorderColor: "rgba(3, 88, 106, 0.80)",
+            pointBackgroundColor: "rgba(3, 88, 106, 0.80)",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            data: {{RD_DATA_DICT[0] | safe}}[Object.keys({{RD_DATA_DICT[0] | safe}})]
+          }, {
+            label: Object.keys({{RD_DATA_DICT[1] | safe}}),
+            backgroundColor: "rgba(38, 185, 154, 0.2)",
+            borderColor: "rgba(38, 185, 154, 0.85)",
+            pointColor: "rgba(38, 185, 154, 0.85)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: {{RD_DATA_DICT[1] | safe}}[Object.keys({{RD_DATA_DICT[1] | safe}})]
+          },
+          {
+            label: Object.keys({{RD_DATA_DICT[2] | safe}}),
+            backgroundColor: "rgba(38, 185, 154, 0.2)",
+            borderColor: "rgba(0, 184, 95, 0.85)",
+            pointColor: "rgba(0, 184, 95, 0.85)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: {{RD_DATA_DICT[2] | safe}}[Object.keys({{RD_DATA_DICT[2] | safe}})]
+          }]
+        };
+
+        var canvasRadar = new Chart(ctx, {
+          type: 'radar',
+          data: data,
+        });
+
+    </script>
+  <script>
+    //투자의견 차트
+    var codes={{MY_CODE | safe}}
+    var twocolor='#305ea2'
+    if (codes==0.1){
+      twocolor='#F0F3F3'
+     }else if (codes<=20) {
+      twocolor='#305ea2'
+     }else if (codes>20 && codes<=40){
+      twocolor='#5793eb'
+    }else if (codes>40 && codes<=60){
+      twocolor='#66b828'
+    }else if (codes>60 && codes<=80){
+      twocolor='#fe8917'
+    }else{
+     twocolor='red'
+    }
+    var chart_gauge_settings = {
+		  lines: 12,
+		  angle: 0,
+		  lineWidth: 0.4,
+		  pointer: {
+			  length: 0.75,
+			  strokeWidth: 0.042,
+			  color: '#1D212A'
+		  },
+		  limitMax: 'false',
+		  colorStart: twocolor,
+		  colorStop: twocolor,
+		  strokeColor: '#F0F3F3',
+		  generateGradient: true
+	  };
+
+
+		if ($('#chart_gauge_01').length){
+
+			var chart_gauge_01_elem = document.getElementById('chart_gauge_01');
+			var chart_gauge_01 = new Gauge(chart_gauge_01_elem).setOptions(chart_gauge_settings);
+
+		}
+
+//데이터
+		if ($('#gauge-text').length){
+
+			chart_gauge_01.maxValue = 100;
+			chart_gauge_01.animationSpeed = 32;
+			chart_gauge_01.set({{MY_CODE | safe}});//넣기
+			chart_gauge_01.setTextField(document.getElementById("gauge-text"));
+
+		}
+    </script>
+  <script>
+      // Radar chart 혜린
+        var ctx = document.getElementById("MyBar");
+          var mybarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: {{BAR_LABEL_LIST | safe}},
+              datasets: [{
+                label: '매출액',
+                backgroundColor: "#26B99A",
+                data: {{BAR_DATA_LIST_MCH | safe}}
+              }, {
+                label: '당기순이익',
+                backgroundColor: "#03586A",
+                data: {{BAR_DATA_LIST_DG | safe}}
+              }]
+            },
+
+            options: {
+              scales: {
+              xAxes: [{
+                gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                             }
+                                        }],
+                yAxes: [{
+                gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+                             },
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
+            }
+          });
+
+
+
+
+
+    </script>
+            <script>
+
+    //---------------------------login(체크) get -------------------
+    //$( "#search_input" ).keydown(function() {
+    $(document).on('keyup', '#search_input', function() {
+        //비동기통신해라.....
+        $.ajax({  url: "/com_search_ajax" ,
+                  type : "post",
+                  data: {"search_input" : $("#search_input").val() } ,
+                  success: function(flask_return_str) {
+                        console.log(flask_return_str);
+                        //------------String -- 객체 로 변환 -------------
+                        flask_return_list  = JSON.parse(flask_return_str)  //jquery
+                        console.log(flask_return_list);
+
+                        html_str = "<table border=1  bordercolor=#E6E9ED>"
+                        //-------------------------------------------------
+                        $.each(flask_return_list, function( i, v ) {
+                            //i 0   v ['smith', 1400]
+                            //i 1   v ['allen', 4000]
+                            console.log( v[0] , v[1]);
+                            html_str += "<tr><td><button style='background-color: #E6E9ED;border:0; outline:0;' class='ajax_com_name_btn' value="+v[0]+" id="+i+"_name >"+v[1]+"</button></td></tr>"    //script
+                        });
+                        html_str += "</table>"
+                        $( "#resdiv" ).empty();
+                        $( "#resdiv" ).html(html_str);
+                   },
+                  error: function(res){ } ,
+                  crossDomain: true
+
+              });
+    });
+
+    $(document).on("click", "#jamybody", function(){
+        $( "#resdiv" ).empty();
+    });
+
+
+    $(document).on("click", ".ajax_com_name_btn", function(){
+        $( "#hidden_stock_code" ).attr("value", $(this).val())
+        $( "#hidden_corp_name" ).attr("value", $(this).text())
+        $( "#myform" ).attr("action","/form_submit_get")
+        $( "#myform" ).attr("method","get")
+        $( "#myform" ).submit();
+        console.log($(this).val());
+        $('.input-group').css("opacity", 0 );
+        $(".ajax_com_name_btn").disabled = true;
+        $("#search_input").prop('disabled', true);
+
+        $( '#searchman' ).empty()
+        html_str = "<div class='loader' style='margin-top:20%;margin-left:45%;'></div><div class='loading' style='margin-left:45%;margin-bottom:300px;'><h1 class='lightgreen'><span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span></h1></div>"
+        $( '#searchman' ).html(html_str);
+
+
+    });
+
+    $(document).on("click", '#search_input', function() {
+        //비동기통신해라.....
+        $.ajax({  url: "/com_search_ajax" ,
+                  type : "post",
+                  data: {"search_input" : $("#search_input").val() } ,
+                  success: function(flask_return_str) {
+                        console.log(flask_return_str);
+                        //------------String -- 객체 로 변환 -------------
+                        flask_return_list  = JSON.parse(flask_return_str)  //jquery
+                        console.log(flask_return_list);
+
+                        html_str = "<table border=1  bordercolor=#E6E9ED>"
+                        //-------------------------------------------------
+                        $.each(flask_return_list, function( i, v ) {
+                            //i 0   v ['smith', 1400]
+                            //i 1   v ['allen', 4000]
+                            console.log( v[0] , v[1]);
+                            html_str += "<tr><td><button style='background-color: #E6E9ED;border:0; outline:0;' class='ajax_com_name_btn' value="+v[0]+" id="+i+"_name >"+v[1]+"</button></td></tr>"    //script
+                        });
+                        html_str += "</table>"
+                        $( "#resdiv" ).empty();
+                        $( "#resdiv" ).html(html_str);
+                   },
+                  error: function(res){  } ,
+                  crossDomain: true
+
+              });
+    });
+
+
+
+</script>
+          <script src="skycons.js"></script>
+    <script>
+    var skycons = new Skycons({"color": "#42C1A7"});
+
+    skycons.add("icon0", Skycons.{{ICONS[0] | safe}});
+    skycons.add("icon1", Skycons.{{ICONS[1] | safe}});
+    skycons.add("icon2", Skycons.{{ICONS[2] | safe}});
+    skycons.add("icon3", Skycons.{{ICONS[3] | safe}});
+    skycons.add("icon4", Skycons.{{ICONS[4] | safe}});
+
+    skycons.add("icon5", Skycons.{{ICONS2[0] | safe}});
+    skycons.add("icon6", Skycons.{{ICONS2[1] | safe}});
+
+    skycons.play();
+    </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>주식 분석!</title>
+
+
+    <!-- Bootstrap -->
+    <link href="/static/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/static/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/static/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="/static/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+    <!-- bootstrap-progressbar -->
+    <link href="/static/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- JQVMap -->
+    <link href="/static/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <!-- bootstrap-daterangepicker -->
+    <link href="/static/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="/static/css/custom.css" rel="stylesheet">
+
+    <!--    google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+</style>
+  </head>
+
+  <body class="nav-md" id="jamybody">
+    <div class="container body">
+      <div class="main_container" style="margin-left:0px">
+
+        <!-- top navigation -->
+        <div class="top_nav" style="margin-left:0px">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle" style="margin-bottom:0px; padding-top:18px;width: 50px;">
+                <a href="/" id="menu_toggle"><i class="fa fa-home"><h4><b></b></h4></i></a>
+              </div>
+
+              <div class="input-group">
+              <ul class="nav navbar-nav navbar-right" style="margin-top:20px;>
+                <li class="">
+
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+
+
+                  </ul>
+                </li>
+
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div id='searchman' class="right_col" role="main" style="margin-left:0px">
+          <!-- top tiles -->
+        <form name="myform" id="myform">
+
+          <input type="hidden" id="hidden_corp_name" name="hidden_corp_name" value=""></input>
+          <input type="hidden" id="hidden_stock_code" name="hidden_stock_code" value="">
+          <input type="hidden" id="hidden_origin_stock_code" name="hidden_origin_stock_code" value="">
+
+            <div style="text-align : center;margin-top:100px;margin-bottom:40px;">
+            <img src="static/images/logo.png" width="500px" height="230px"></img>
+            </div>
+              <div class="input-group" style="width:80%;margin-bottom: 0px;margin-left:13%;">
+
+                    <input id="search_input" name="search_input" autocomplete="off" type="text" class="form-control" placeholder="검색어 입력 후 Enter" style="width:100%;height:50px;z-index:4;">
+                    <div id="resdiv" style="position: Absolute;z-index:3;background-color:#EDEDED;width:100%;margin-top:50px;"></div>
+
+                  </div>
+
+
+            </form>
+          <div style="margin-bottom:27%"></div>
+        </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+
+        <footer style="margin-left:0px;margin-top:1.5%;">
+          <div class="pull-right" >
+            개발자 : 김문식 이혜린 최상현 황지현
+          </div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+
+
+    <!-- jQuery -->
+    <script src="/static/vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/static/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="/static/vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="/static/vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="/static/vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="/static/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="/static/vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="/static/vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="/static/vendors/Flot/jquery.flot.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.time.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="/static/vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="/static/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="/static/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="/static/vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="/static/vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="/static/vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="/static/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="/static/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="/static/vendors/moment/min/moment.min.js"></script>
+    <script src="/static/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="/static/js/custom.js"></script>
+
+    <script>
+
+    //---------------------------login(체크) get -------------------
+    //$( "#search_input" ).keydown(function() {
+    $(document).on('keyup', '#search_input', function() {
+        //비동기통신해라.....
+        $.ajax({  url: "/com_search_ajax" ,
+                  type : "post",
+                  data: {"search_input" : $("#search_input").val() } ,
+                  success: function(flask_return_str) {
+                        console.log(flask_return_str);
+                        //------------String -- 객체 로 변환 -------------
+                        flask_return_list  = JSON.parse(flask_return_str)  //jquery
+                        console.log(flask_return_list);
+
+                        html_str = "<table border=1  bordercolor=#EDEDED>"
+                        //-------------------------------------------------
+                        $.each(flask_return_list, function( i, v ) {
+                            //i 0   v ['smith', 1400]
+                            //i 1   v ['allen', 4000]
+                            console.log( v[0] , v[1]);
+                            html_str += "<tr><td><button style='background-color: #EDEDED;border:0; outline:0;' class='ajax_com_name_btn' value="+v[0]+" id="+i+"_name >"+v[1]+"</button></td></tr>"    //script
+                        });
+                        html_str += "</table>"
+                        $( "#resdiv" ).empty();
+                        $( "#resdiv" ).html(html_str);
+                   },
+                  error: function(res){  } ,
+                  crossDomain: true
+
+              });
+    });
+
+
+
+    $(document).on("click", ".ajax_com_name_btn", function(){
+        $( "#hidden_stock_code" ).attr("value", $(this).val())
+        $( "#hidden_corp_name" ).attr("value", $(this).text())
+        $( "#myform" ).attr("action","/form_submit_get")
+        $( "#myform" ).attr("method","get")
+        $( "#myform" ).submit();
+        $( '#searchman' ).empty()
+        html_str = "<div class='loader' style='margin-top:20%;margin-left:45%;'></div><div class='loading' style='margin-left:45%;'><h1 class='lightgreen'><span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span></h1></div>"
+        $( '#searchman' ).html(html_str);
+        console.log($(this).val(),$(this).text());
+
+
+    });
+    $(document).on("click", "#jamybody", function(){
+        $( "#resdiv" ).empty();
+    });
+
+    $(document).on("click", '#search_input', function() {
+        //비동기통신해라.....
+        $.ajax({  url: "/com_search_ajax" ,
+                  type : "post",
+                  data: {"search_input" : $("#search_input").val() } ,
+                  success: function(flask_return_str) {
+                        console.log(flask_return_str);
+                        //------------String -- 객체 로 변환 -------------
+                        flask_return_list  = JSON.parse(flask_return_str)  //jquery
+                        console.log(flask_return_list);
+
+                        html_str = "<table border=1  bordercolor=#EDEDED>"
+                        //-------------------------------------------------
+                        $.each(flask_return_list, function( i, v ) {
+                            //i 0   v ['smith', 1400]
+                            //i 1   v ['allen', 4000]
+                            console.log( v[0] , v[1]);
+                            html_str += "<tr><td><button style='background-color: #EDEDED;border:0; outline:0;' class='ajax_com_name_btn' value="+v[0]+" id="+i+"_name >"+v[1]+"</button></td></tr>"    //script
+                        });
+                        html_str += "</table>"
+                        $( "#resdiv" ).empty();
+                        $( "#resdiv" ).html(html_str);
+                   },
+                  error: function(res){  } ,
+                  crossDomain: true
+
+              });
+    });
+
+
+</script>
+<style>
+  .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #26B99A; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  .lightgreen{color:#26B99A;}
+
+  .loading span {
+  display: inline-block;
+  margin: 0 -.075em;
+  animation: loading .7s infinite alternate;
+}
+.loading span:nth-child(2) {
+  animation-delay: .1s;
+}
+.loading span:nth-child(3) {
+  animation-delay: .2s;
+}
+.loading span:nth-child(4) {
+  animation-delay: .3s;
+}
+.loading span:nth-child(5) {
+  animation-delay: .4s;
+}
+.loading span:nth-child(6) {
+  animation-delay: .5s;
+}
+.loading span:nth-child(7) {
+  animation-delay: .6s;
+}
+@keyframes loading {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+</style>
+
+  </body>
+</html>
