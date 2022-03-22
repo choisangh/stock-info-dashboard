@@ -10,7 +10,7 @@ Main Page -Search bar <br><br>
 
 <img width="800" src="https://blog.kakaocdn.net/dn/JNdEA/btrwUjHEX3e/eVCLiAKYhwhOqT3HkgAd90/img.png"><br>
 
-검색한 기업의 주가 데이터, 기업 데이터(뉴스기사, 재무제표 등) 연산(ARIMA, 기업지표 계산)을 하는 시간 동안 로딩 화면 화면구현<br>
+검색한 기업의 주가 데이터, 기업 데이터(뉴스기사, 재무제표 등) 연산(ARIMA, 기업지표 계산)을 하는 시간 동안 로딩 화면 구현<br>
 
 <img width="800" src="https://blog.kakaocdn.net/dn/rYj6m/btrwZ0UD8Me/qMgZDq2iwLVbTO6rkzgpT1/img.png"><br>
 
